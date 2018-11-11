@@ -1,0 +1,6 @@
+<launch>
+  <node name = "serial_node" pkg = "rosserial_python" type = "serial_node.py" args = "tcp" output = "screen"/>
+
+  <node name = "ssh" pkg = "interfacing" type = "ssh.py" output = "screen"/>
+  <node name = "velocity" pkg = "interfacing" type = "Controller.py" output = "screen"/>
+</launch>
