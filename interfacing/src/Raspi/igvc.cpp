@@ -205,8 +205,8 @@ int main(){
 				rpm_l = delTick_Left*0.135;
 				rpm_r = delTick_Right*0.135;
 
-        pwmVal_Left=PID(rpm_l,setVel_Left,&prvErr_L,&intgtr_L,kp_l,ki_l,kd_l);
-        pwmVal_Right=PID(rpm_r,setVel_Right,&prvErr_R,&intgtr_R,kp_r,ki_r,kd_r);
+       			pwmVal_Left=PID(rpm_l,setVel_Left,&prvErr_L,&intgtr_L,kp_l,ki_l,kd_l);
+        		pwmVal_Right=PID(rpm_r,setVel_Right,&prvErr_R,&intgtr_R,kp_r,ki_r,kd_r);
 				//pwmVal=-20;
 				dir_l=(pwmVal_Left>=0)?1:0;
 				dir_r=(pwmVal_Right>=0)?0:1;
@@ -226,8 +226,11 @@ int main(){
 				data.leftwheel = rpm_l;
 				data.rightwheel = rpm_r;
 				Feedback.publish(&data);
+				unsigned long now2 = micros();
+				while(mircos()-now2<99999)
+					{continue;}
+        		//usleep(99999);
 				nh.spinOnce();
-        usleep(99999);
 
 			 }
 
