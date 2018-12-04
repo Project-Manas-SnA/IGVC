@@ -226,14 +226,9 @@ int main(){
 				data.leftwheel = rpm_l;
 				data.rightwheel = rpm_r;
 				Feedback.publish(&data);
-				unsigned long now2 = micros();
-				while(mircos()-now2<99999)
-					{continue;}
-        		//usleep(99999);
 				nh.spinOnce();
-
+				usleep(99999);
 			 }
-
 		 }
 return 0;
 }
