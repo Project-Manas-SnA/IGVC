@@ -1,6 +1,6 @@
 /******************
-* Name: Encoder.cpp
-* Description: Calculate velocity and ticks
+* Name: igvcTest.cpp
+* Description: Calculate velocity
 ********************/
 
 /*Header Files*/
@@ -14,7 +14,7 @@
 #include<signal.h>
 #include<ros.h>
 #include<interfacing/Velocity.h>
-#include <unistd.h>
+#include<unistd.h>
 
 using namespace std;
 
@@ -38,33 +38,39 @@ char *rosSrvrIp = "192.168.31.124";
 
 /*GOBAL VARIABLE*/
 
-bool AState_Right,BState_Right,dir_r=0;
-unsigned long long int pos_r=0,newTick_Right=0,lastTick_Right=0,delTick_Right; 
-double prvErr_R = 0,intgtr_R = 0,rpm_r=10,setVel_Right=0,kp_r=.35,ki_r=1.2,kd_r=0;
-int pwmVal_Right ;
+bool AState_Right, BState_Right, dir_r = 0;
+long long int pos_r = 0, newTick_Right, lastTick_Right = 0, delTick_Right; 
+double prvErr_R = 0, intgtr_R = 0, rpm_r, setVel_Right = 0, kp_r = .35, ki_r = 1.2, kd_r = 0;
+int pwmVal_Right;
 
-bool AState_Left,BState_Left,dir_l=0;
-unsigned long long int pos_l=0,newTick_Left=0,lastTick_Left=0,delTick_Left=0;
-double prvErr_L = 0,intgtr_L = 0,rpm_l=10,setVel_Left=0,kp_l=.35,ki_l=1.2,kd_l=0;
+bool AState_Left, BState_Left, dir_l=0;
+long long int pos_l = 0, newTick_Left, lastTick_Left = 0, delTick_Left;
+double prvErr_L = 0, intgtr_L = 0, rpm_l, setVel_Left = 0, kp_l = .35, ki_l = 1.2, kd_l = 0;
 int pwmVal_Left;
 
-unsigned long long int  lastTime=0,now=0,dt=100000;
+unsigned long long int  lastTime = 0, now = 0;
 
 /*CONSTANTS*/
 
-float cpr=2400.0;
+float cpr = 2400.0;
 float circumference = 0.38 * 22 / 7.0;
+unsigned long long int dt = 100000;
 
 void callback(const interfacing::Velocity &msg)
 {
 	setVel_Left  =  msg.leftwheel;
 	setVel_Right =  msg.rightwheel;
 }
+
 int PID(double currentRpm, double setRpm, double *previousError,double *integrator, double kp,double ki,double kd)
 {
 	double h = 0;
 	double i = 0;
 	double error = (setRpm) - (currentRpm);
+	
+	if (abs(error) < 0.5)
+		error = 0;
+
 	double proportional = error;
 	h = error - (*previousError);
 	double differentiator = h / 0.1;
@@ -74,7 +80,6 @@ int PID(double currentRpm, double setRpm, double *previousError,double *integrat
 	*previousError = error;
 	return pid;
 }
-
 
 void Enc_A_Right()
 {
@@ -107,7 +112,6 @@ void Enc_A_Left()
 	 	pos_l+=(BState_Left==LOW)?(1):(-1);
   	else
 		pos_l+=(BState_Left==HIGH)?(1):(-1);
-
 }
 
 void Enc_B_Left()
@@ -192,8 +196,8 @@ int main()
 		softPwmWrite(pwmPinL, abs(pwmVal_Left));
 		softPwmWrite(pwmPinR, abs(pwmVal_Right));
 
-		cout<<pos_l<<"\t"<<rpm_l<<"\t"<<delTick_Left<<"\t"<<pwmVal_Left<<"-----Left----"<<endl;
-		cout<<pos_r<<"\t"<<rpm_r<<"\t"<<delTick_Right<<"\t"<<pwmVal_Right<<"-----Right----"<<endl;
+		cout<<rpm_l<<"\t"<<setVel_Left<<"\t"<<pwmVal_Left<<"-----Left----"<<endl;
+		cout<<rpm_r<<"\t"<<setVel_Right<<"\t"<<pwmVal_Right<<"-----Right----"<<endl;
 
 		data.leftwheel = rpm_l;
 		data.rightwheel = rpm_r;
