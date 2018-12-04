@@ -52,7 +52,7 @@ unsigned long long int  lastTime = 0, now = 0;
 
 /*CONSTANTS*/
 
-float cpr = 57600.0;
+float cpr = 48000.0;
 float circumference = 0.38 * 22 / 7.0;
 unsigned long long int dt = 100000;
 
